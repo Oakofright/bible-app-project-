@@ -1,0 +1,272 @@
+/* =========================================
+   Sanctuary App – Complete Design System
+   Light & Dark Mode • Fully Responsive
+   ==========================================n============================ */
+:root {
+  /* Light Mode (Default) */
+  --primary-blue: #2a4d69;
+  --secondary-light-blue: #c5d7ed;
+  --background-main: #f5f5f5;
+  --accent-gold: #e0b97b;
+  ;
+  --text-primary: #343a40;
+  --text-secondary: #6c757d;
+  --text-inverse: #ffffff;
+  --card-background: #ffffff;
+  --header-background: #f5f5f5;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 6px 16px rgba(224, 185, 123, 0.3);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode – System Preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-blue: #8ab6d6;
+    --secondary-light-blue: #1f2937;
+    --background-main: #121212;
+    --accent-gold: #d4af37;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --text-inverse: #ffffff;
+    --card-background: #1e1e1e;
+    --header-background: #121212;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 6px 16px rgba(212, 175, 55, 0.2);
+  }
+}
+
+/* Manual Dark Mode Toggle Support */
+body[data-theme="dark"],
+html[data-theme="dark"] {
+  --primary-blue: #8ab6d6;
+  --secondary-light-blue: #1f2937;
+  --background-main: #121212;
+  --accent-gold: #d4af37;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-inverse: #ffffff;
+  --card-background: #1e1e1e;
+  --header-background: #121212;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 6px 16px rgba(212, 175, 55, 0.2);
+}
+
+/* =========================================
+   Global Reset & Base
+   ========================================= */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f172a; /* Deep slate – beautiful outside phone */
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.5s ease;
+}
+
+/* =========================================
+   Mobile Screen Container
+   ========================================= */
+.mobile-screen-wrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1500px;
+}
+
+.mobile-screen {
+  width: 430px;
+  height: 932px;
+  background: var(--background-main);
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 10px solid #000;
+  border-top-width: 32px; /* Notch area */
+  border-bottom-width: 32px;
+  transition: var(--transition);
+}
+
+/* Active screen logic (controlled by JS) */
+.mobile-screen.active {
+  z-index: 10;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.mobile-screen {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(100%);
+}
+
+/* =========================================
+   Header
+   ========================================= */
+header {
+  padding: 16px 24px;
+  background: var(--header-background);
+  border-bottom: 1px solid rgba(100, 100, 100, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.4s ease;
+}
+
+header .logo {
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--primary-blue);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  letter-spacing: -0.5px;
+}
+
+header .left-icon,
+header .right-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  color: var(--primary-blue);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+header .left-icon:hover,
+header .right-icon:hover {
+  background: rgba(138, 182, 214, 0.15);
+  transform: scale(1.08);
+}
+
+header .right-icon img,
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--accent-gold);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* =========================================
+   Content Areas
+   ========================================= */
+.home-feed-content,
+.moods-content,
+.devotional-display-screen,
+.profile-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.home-feed-content::-webkit-scrollbar,
+.moods-content::-webkit-scrollbar,
+.profile-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Home Feed */
+.home-feed-content {
+  padding: 20px;
+  gap: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.verse-card {
+  background: var(--card-background);
+  border-radius: var(--radius-md);
+  padding: 36px 28px;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  max-width: 380px;
+  margin: 0 auto;
+  transition: var(--transition);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.verse-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+}
+
+.verse-text {
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.55;
+  margin-bottom: 18px;
+  color: var(--text-primary);
+}
+
+.verse-reference {
+  font-size: 16.5px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+}
+
+.action-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--secondary-light-blue);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--primary-blue);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.action-button:hover {
+  transform: scale(1.12);
+  filter: brightness(1.05);
+}
+
+.action-button.active {
+  background: var(--accent-gold);
+  color: #fff !important;
+}
