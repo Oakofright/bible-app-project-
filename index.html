@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanctuary App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+      /* General reset and base styles */
+      :root {
+        --primary-blue: #2a4d69;
+        --secondary-light-blue: #c5d7ed;
+        --background-cream: #f5f5f5;
+        --accent-gold: #e0b97b;
+        --text-primary: #343a40;
+        --text-secondary: #6c757d;
+        --card-background: #fbfbfb; /* Slightly off-white for cards */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        /* Smooth transitions on all interactive elements */
+        transition: all 0.2s ease-in-out;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-cream);
+        color: var(--text-primary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
+      /* Base interactive element transitions and states */
+      button,
+      a,
+      input[type='text'],
+      .interactive {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+          background-color 0.2s ease-in-out, border-color 0.2s ease-in-out,
+          color 0.2s ease-in-out;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      button:focus,
+      input:focus,
+      .interactive:focus {
+        outline: 2px solid var(--primary-blue);
+        outline-offset: 2px;
+      }
+
+      /* Mobile screen wrapper */
+      .mobile-screen-wrapper {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap; /* Allow screens to wrap on smaller viewports */
+        justify-content: center;
+        align-items: flex-start; /* Align screens to the top */
+        padding: 30px; /* Padding around the screens */
+      }
+
+      .mobile-screen {
+        width: 430px; /* Target width */
+        height: 932px; /* Target height */
+        background-color: var(--background-cream);
+        border-radius: 30px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Hide scrollbars within the screen */
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        flex-shrink: 0; /* Prevent shrinking on wrap */
+      }
+
+      .screen-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      /* Header styles */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background-color: var(--background-cream);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 10;
+        flex-shrink: 0;
+      }
+
+      header .logo {
+        font-family: 'Inter', sans-serif;
+        font-weight: 500; /* Medium */
+        font-size: 22px;
+        color: var(--primary-blue);
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      header .left-icon,
+      header .right-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--primary-blue);
+        flex-shrink: 0;
+      }
+
+      header .left-icon {
+        position: absolute; /* Position relative to screen, not flex container */
+        left: 24px;
+      }
+
+      header .right-icon img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid rgba(52, 58, 64, 0.2);
+        object-fit: cover;
+      }
+
+      header .right-icon.placeholder {
+        background-color: var(--secondary-light-blue);
+        color: var(--primary-blue);
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 40px;
+      }
+
+      /* Home Feed Specific Styles */
+      .home-feed-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px; /* Vertical spacing between main sections/cards */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      }
+
+      .verse-card {
+        background-color: var(--card-background);
+        border-radius: 16px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow (4dp) */
+        padding: 32px 24px; /* Consistent vertical rhythm with 24px padding within cards */
+        width: calc(100% - 48px); /* 80% of screen width, given 24px horizontal margins */
+        max-width: 382px; /* 430px - 2*24px = 382px */
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .verse-card p.verse-text {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.8; /* Generous line height */
+        color: var(--text-primary);
+        margin-bottom: 16px;
+      }
+
+      .verse-card p.verse-reference {
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+      }
+
+      .verse-card .actions {
+        display: flex;
+        gap: 16px;
+        padding-top: 16px; /* Space between reference and actions */
+      }
+
+      .verse-card .action-button {
+        width: 48px;
+        height: 48px;
+        background-color: #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border: none;
+        font-size: 20px;
+        color: var(--text-secondary);
+      }
+
+      .verse-card .action-button:hover {
+        background-color: #d0d0d0;
+      }
+
+      .verse-card .action-button.active {
+        color: var(--accent-gold);
+        background-color: #f7e1b1; /* Lighter gold background */
+      }
+
+      /* Spiritual Moods Specific Styles */
+      .moods-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 40px 24px;
+        gap: 20px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .moods-content h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        line-height: 1.2;
+      }
+
+      .moods-content p.subtitle {
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .mood-chips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 380px; /* Limit width of grid */
+      }
+
+      .mood-chip {
+        background-color: var(--secondary-light-blue);
+        border-radius: 12px;
+        padding: 16px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--primary-blue);
+        border: 2px solid transparent;
+        text-align: center;
+      }
+
+      .mood-chip i {
+        font-size: 24px;
+        color: var(--primary-blue);
+      }
+
+      .mood-chip:hover {
+        background-color: #b0c9e6; /* Slightly darker light blue */
+      }
+
+      .mood-chip.selected {
+        border-color: var(--accent-gold);
+        background-color: #f7e1b1; /* Lighter gold background */
+        color: var(--primary-blue);
+      }
+
+      .mood-chip.selected i {
+        color: var(--primary-blue); /* Keep icon consistent */
+      }
+
+      .generate-button {
+        background-color: var(--primary-blue);
+        color: white;
+        border-radius: 12px;
+        padding: 15px 0;
+        font-size: 18px;
+        font-weight: 600;
+        width: 100%;
+        max-width: 380px;
+        border: none;
+        margin-top: auto; /* Push to bottom */
+        cursor: pointer;
+      }
+
+      /* Devotional Display Screen */
+      .devotional-display-screen {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          var(--secondary-light-blue) 100%
+        );
+        color: white;
+        padding: 40px 24px;
+        flex-grow: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .devotional-display-screen h3 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.3;
+      }
+
+      .devotional-display-screen .devotion-text {
+        font-size: 16px;
+        line-height: 1.7; /* Generous line height */
+        margin-bottom: 30px;
+        text-align: left;
+        width: 100%;
+        max-width: 360px;
+      }
+
+      .devotional-display-screen .devotion-source {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 40px;
+      }
+
+      .devotional-display-screen .devotion-actions {
+        display: flex;
+        gap: 20px;
+      }
+
+      .devotional-display-screen .action-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+      }
+      .devotional-display-screen .action-button.active {
+        background-color: var(--accent-gold);
+        color: var(--primary-blue);
+      }
+
+      /* User Profile Specific Styles */
+      .profile-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px 0 0; /* Padding for scrollable content */
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .profile-header-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: var(--secondary-light-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 36px;
+        color: var(--primary-blue);
+        margin-bottom: 12px;
+        border: 2px solid rgba(52, 58, 64, 0.1); /* light outline */
+        object-fit: cover;
+      }
+
+      .profile-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+      }
+
+      .profile-streak {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .profile-tabs {
+        display: flex;
+        justify-content: space-around;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+
+      .profile-tab-button {
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-grow: 1;
+        text-align: center;
+        position: relative;
+      }
+
+      .profile-tab-button.active {
+        color: var(--primary-blue);
+      }
+
+      .profile-tab-button.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px; /* Align with border */
+        left: 0;
+        right: 0;
+        height: 3px;
+        background-color: var(--accent-gold);
+        border-radius: 2px;
+      }
+
+      .saved-content-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 24px 20px;
+      }
+
+      .saved-verse-card {
+        background-color: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        padding: 20px;
+        text-align: left;
+      }
+
+      .saved-verse-card p.verse-text {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.6;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+
+      .saved-verse-card p.verse-reference {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--text-secondary);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1500px) {
+        .mobile-screen-wrapper {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .mobile-screen {
+          width: 100%;
+          border-radius: 0;
+          box-shadow: none;
+          height: auto; /* Allow content to define height on very small screens */
+          min-height: 100vh;
+        }
+        .home-feed-content,
+        .moods-content,
+        .profile-content {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        .mood-chips-grid,
+        .generate-button {
+          max-width: 100%;
+        }
+        .verse-card {
+          width: 100%;
+          max-width: none;
+          margin: 0;
+        }
+        header .left-icon {
+          left: 16px;
+        }
+        header .logo {
+          transform: none; /* Reset translation for logo */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-screen-wrapper">
+      <!-- Screen 1: Home Feed -->
+      <div class="mobile-screen">
+        <header>
+          <div class="left-icon" style="visibility: hidden"></div>
+          <h1 class="logo">Sanctuary</h1>
+          <div class="right-icon interactive">
+            <img src="https://storage.googleapis.com/forge-sites/e6bad96f1dfbdf80fedc10f756025a2b5eefae866202e29c8f17dd01987da89d.webp?X-Goog-Algorithm=GOOG4-RSA-SHA256&amp;X-Goog-Credential=164061697651-compute%40developer.gserviceaccount.com%2F20251120%2Fauto%2Fstorage%2Fgoog4_request&amp;X-Goog-Date=20251120T144258Z&amp;X-Goog-Expires=86400&amp;X-Goog-SignedHeaders=host&amp;response-access-control-allow-origin=https%3A%2F%2Fforge.moonchild.ai&amp;X-Goog-Signature=4bcc306bf0b85e7278bd68fd52d7c0f6053ab45bb9be65f4b072d5bfc686bb3f9f0452924bb0a72d3a98e4c947fa708761771c7ced67b48a833d2c7a4bf96a5d15bd4c275bbf82be248ad18d98212e47d203a97dc4e3c24d6fffd81b8b03e1634b36d4efed539eba79a7ba90c7e86c52866333ba957c80fcd49ac1756cca8a8dbd899e44219632a425e8d170d98e1f738b027627630a0d8e716f4e0aa47bfd239397b667d8815236a6f4ed0c3f52d5d603728c502c9541e63da628e48b372bd5df21a4e709a147723e862820c6fefe203a13db30515c2d38eb743199c2ba02640007c429b7384de7f2ec40684442a63de03576c39154b2e6928a99b745749755" alt="Abstract user avatar representing a person's profile">
+          </div>
+        </header>
+        <div class="home-feed-content">
+          <div class="verse-card interactive">
+            <p class="verse-text">
+              "The Lord is my shepherd; I shall not want. He makes me lie down in green pastures. He
+              leads me beside still waters."
+            </p>
+            <p class="verse-reference">Psalm 23:1-2</p>
+            <div class="actions">
+              <button class="action-button like-button interactive">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="action-button save-button interactive">
+                <i class="fas fa-bookmark"></i>
+              </button>
+              <button class="action-button share-button interactive">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="verse-card interactive">
+            <p class="verse-text">
+              "For I know the plans I have for you,” declares the Lord, “plans to prosper you and
+              not to harm you, plans to give you hope and a future."
+            </p>
+            <p class="verse-reference">Jeremiah 29:11</p>
+            <div class="actions">
+              <button class="action-button like-button interactive">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="action-button save-button interactive active">
+                <i class="fas fa-bookmark"></i>
+              </button>
+              <button class="action-button share-button interactive">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="verse-card interactive">
+            <p class="verse-text">
+              "I can do all this through him who gives me strength."
+            </p>
+            <p class="verse-reference">Philippians 4:13</p>
+            <div class="actions">
+              <button class="action-button like-button interactive active">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="action-button save-button interactive">
+                <i class="fas fa-bookmark"></i>
+              </button>
+              <button class="action-button share-button interactive">
+                <i class="fas fa-share-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 2: Spiritual Moods / Devotion Generator -->
+      <div class="mobile-screen">
+        <header>
+          <div class="left-icon interactive">
+            <i class="fas fa-arrow-left"></i>
+          </div>
+          <h1 class="logo">Daily Devotion</h1>
+          <div class="right-icon" style="visibility: hidden"></div>
+        </header>
+        <div class="moods-content">
+          <h2>How are you feeling today?</h2>
+          <p class="subtitle">Choose a mood to receive a tailored devotional message.</p>
+          <div class="mood-chips-grid">
+            <div class="mood-chip interactive">
+              <i class="fas fa-frown"></i>
+              <span>Anxious</span>
+            </div>
+            <div class="mood-chip interactive selected">
+              <i class="fas fa-smile-beam"></i>
+              <span>Joyful</span>
+            </div>
+            <div class="mood-chip interactive">
+              <i class="fas fa-question-circle"></i>
+              <span>Seeking Guidance</span>
+            </div>
+            <div class="mood-chip interactive">
+              <i class="fas fa-hand-holding-heart"></i>
+              <span>Grateful</span>
+            </div>
+            <div class="mood-chip interactive">
+              <i class="fas fa-leaf"></i>
+              <span>Peaceful</span>
+            </div>
+            <div class="mood-chip interactive">
+              <i class="fas fa-tired"></i>
+              <span>Tired</span>
+            </div>
+          </div>
+          <button class="generate-button interactive">Generate Devotion</button>
+        </div>
+      </div>
+
+      <!-- Conceptual Screen for Devotional Display (follow-up to Moods screen) -->
+      <div class="mobile-screen">
+        <header>
+          <div class="left-icon interactive" style="color: white">
+            <i class="fas fa-arrow-left"></i>
+          </div>
+          <h1 class="logo" style="color: white">Your Devotion</h1>
+          <div class="right-icon" style="visibility: hidden"></div>
+        </header>
+        <div class="devotional-display-screen">
+          <h3>Finding Joy in the Everyday</h3>
+          <p class="devotion-text">
+            In moments of pure joy, our hearts often burst with gratitude. Today, let's reflect on
+            the simple blessings around us, seeing them as divine gifts. Joy is not merely an
+            emotion, but a strength that sustains us, connecting us to the boundless love that
+            surrounds us. Let this joy ripple outward, touching those you encounter.
+            <br><br>
+            Remember, joy is a choice, a perspective, and a reflection of the light within you. Even
+            in challenges, seek out the sparks of happiness, for they are divine affirmations of
+            hope and purpose.
+          </p>
+          <p class="devotion-source">Psalm 118:24</p>
+          <div class="devotion-actions">
+            <button class="action-button like-button interactive">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="action-button save-button interactive active">
+              <i class="fas fa-bookmark"></i>
+            </button>
+            <button class="action-button share-button interactive">
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 3: User Profile & Saved Content -->
+      <div class="mobile-screen">
+        <header>
+          <div class="left-icon" style="visibility: hidden"></div>
+          <h1 class="logo">Profile</h1>
+          <div class="right-icon interactive">
+            <i class="fas fa-cog"></i>
+          </div>
+        </header>
+        <div class="profile-content">
+          <div class="profile-header-info">
+            <img src="https://storage.googleapis.com/forge-sites/71b46d28de11e380c0e2bf0b1ef9e5b5a8f202e9bc6af00ab33c352363b92369.webp?X-Goog-Algorithm=GOOG4-RSA-SHA256&amp;X-Goog-Credential=164061697651-compute%40developer.gserviceaccount.com%2F20251120%2Fauto%2Fstorage%2Fgoog4_request&amp;X-Goog-Date=20251120T144258Z&amp;X-Goog-Expires=86400&amp;X-Goog-SignedHeaders=host&amp;response-access-control-allow-origin=https%3A%2F%2Fforge.moonchild.ai&amp;X-Goog-Signature=02eaa37bc5c6ba023998312a2a4c8765cb5c7ebf2695c80d929280d1a5d8afc366318d1188163f1a3d74041fd8e9fd133c73be6ebe2ca39050b01467b103a7ba63918cb85454a130f42728841b684f6752be01bcb8d6772df8266da3b385fca699543041a3635abd86aa54d096189e7f69df87383d8465d6daf533ad196880d0a7dcc91f918f0b7f13fe3b6fa03ca7b925206aeb64bdf83383f0d89cfe8ebed406f5addf3eb0d1fb36bcea42632fbeccb774d698ba5fc23e50fde12a35329cb869fded3646440a82ea170a2cfda9e637c64dc52bbf9bf15ac65edd8e65c625fbc653fbb4a2edec400c3f4b9864a47bc176c96eb38153b6cc6a3203723530e20c" alt="Stylized abstract user avatar for profile" class="profile-avatar">
+            <h2 class="profile-name">John Doe</h2>
+            <p class="profile-streak">Day 45 Streak 🔥</p>
+          </div>
+          <div class="profile-tabs">
+            <button class="profile-tab-button interactive active">Saved Verses</button>
+            <button class="profile-tab-button interactive">Devotion History</button>
+          </div>
+          <div class="saved-content-list">
+            <div class="saved-verse-card interactive">
+              <p class="verse-text">
+                "The Lord is my strength and my shield; in him my heart trusts, and I am helped."
+              </p>
+              <p class="verse-reference">Psalm 28:7</p>
+            </div>
+            <div class="saved-verse-card interactive">
+              <p class="verse-text">
+                "Cast your burden on the Lord, and he will sustain you; he will never permit the
+                righteous to be moved."
+              </p>
+              <p class="verse-reference">Psalm 55:22</p>
+            </div>
+            <div class="saved-verse-card interactive">
+              <p class="verse-text">
+                "But those who hope in the Lord will renew their strength. They will soar on wings
+                like eagles; they will run and not grow weary, they will walk and not be faint."
+              </p>
+              <p class="verse-reference">Isaiah 40:31</p>
+            </div>
+            <div class="saved-verse-card interactive">
+              <p class="verse-text">
+                "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord
+                your God will be with you wherever you go."
+              </p>
+              <p class="verse-reference">Joshua 1:9</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simulate interactive states with JavaScript
+      document.addEventListener('DOMContentLoaded', () => {
+        // Home Feed: Like and Save buttons
+        document.querySelectorAll('.verse-card .action-button').forEach((button) => {
+          button.addEventListener('click', (e) => {
+            e.currentTarget.classList.toggle('active');
+          });
+        });
+
+        // Moods Screen: Mood chips selection
+        document.querySelectorAll('.mood-chip').forEach((chip) => {
+          chip.addEventListener('click', (e) => {
+            // Deselect all others, select current one
+            document.querySelectorAll('.mood-chip').forEach((c) => c.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+          });
+        });
+
+        // Profile Screen: Tab switching
+        document.querySelectorAll('.profile-tab-button').forEach((tab) => {
+          tab.addEventListener('click', (e) => {
+            document
+              .querySelectorAll('.profile-tab-button')
+              .forEach((t) => t.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            // In a real app, this would toggle content visibility
+          });
+        });
+      });
+    </script>
+  
+</body></html>
